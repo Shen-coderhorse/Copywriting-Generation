@@ -27,78 +27,52 @@
 
 <table>
 <tr>
-<td width="33%" align="center" valign="top">
+<td width="50%" align="center" valign="top">
 
 ### 🤖 AI 智能生成
 
-支持 **OpenAI 兼容协议**
-
-```
-DeepSeek · 通义千问 · ChatGPT · 硅基流动
-```
+支持 **OpenAI 兼容协议** · `DeepSeek` · `通义千问` · `ChatGPT`
 
 🚀 自动关闭思考模式，速度 **提升 6 倍+**
 
 </td>
-<td width="33%" align="center" valign="top">
+<td width="50%" align="center" valign="top">
 
 ### 📚 知识库学习
 
-上传 `.docx` / `.pdf` / `.txt`
-
-AI 学习你的文案风格
-
-✨ 生成结果 **千人千面**
-
-</td>
-<td width="33%" align="center" valign="top">
-
-### 🌅 双模式切换
-
-**☀️ 早安** — 温暖启程
-
-**🌙 晚安** — 卸下疲惫
-
-📅 自动匹配日期与星期
+上传 `.docx` / `.pdf` / `.txt` → AI 学习你的文案风格 → ✨ **千人千面**
 
 </td>
 </tr>
 <tr>
-<td width="33%" align="center" valign="top">
+<td width="50%" align="center" valign="top">
+
+### 🌅 双模式切换
+
+**☀️ 早安** 温暖启程 · **🌙 晚安** 卸下疲惫 · 📅 自动匹配日期与星期
+
+</td>
+<td width="50%" align="center" valign="top">
 
 ### 💻 三端通用
 
-| 平台 | 方式 | 大小 |
-|:---:|------|:---:|
-| 🖥️ 桌面 | 双击 EXE | ~27 MB |
-| 🌐 浏览器 | localhost | - |
-| 📱 手机 | 安装 APK | ~3.6 MB |
+🖥️ 双击 EXE (~27MB) · 🌐 浏览器 localhost · 📱 安装 APK (~3.6MB)
 
 </td>
-<td width="33%" align="center" valign="top">
+</tr>
+<tr>
+<td width="50%" align="center" valign="top">
 
 ### 🎨 桌面双栏布局
 
-```
-┌─────────────────────┬──────────┐
-│                     │ ⚙️ AI 配置 │
-│   ✨ 文案展示区     │ 📁 知识库  │
-│                     │ 📜 历史记录 │
-│   [复制] [生成]     │          │
-└─────────────────────┴──────────┘
-```
-
-充分利用屏幕空间
+左侧文案展示 + 右侧配置/知识库/历史，充分利用屏幕空间
 
 </td>
-<td width="33%" align="center" valign="top">
+<td width="50%" align="center" valign="top">
 
 ### 🔒 完全本地化
 
-- 💾 SQLite 持久存储
-- 🔐 无需联网（除 AI）
-- 📜 历史永久保存
-- ⚙️ 配置自动保留
+💾 SQLite 持久存储 · 🔐 无需联网(除AI) · 📜 历史永久保存 · ⚙️ 配置自动保留
 
 </td>
 </tr>
