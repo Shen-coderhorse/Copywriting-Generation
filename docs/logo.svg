@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="200" height="200">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6B9D;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FF4D6D;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#C9486E;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="starGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFF5F8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFE4EC;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="softShadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#C9486E" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="200" cy="200" r="180" fill="url(#bg)" filter="url(#softShadow)"/>
+
+  <!-- Inner decorative ring -->
+  <circle cx="200" cy="200" r="150" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+  <circle cx="200" cy="200" r="120" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+
+  <!-- Sparkle star (centerpiece) -->
+  <g transform="translate(200,175)" filter="url(#glow)">
+    <!-- Main star shape -->
+    <path d="M0,-45 L10,-12 L46,-3 L18,20 L24,56 L0,38 L-24,56 L-18,20 L-46,-3 L-10,-12 Z"
+          fill="url(#starGlow)" opacity="0.95"/>
+    <!-- Inner highlight -->
+    <path d="M0,-30 L7,-8 L30,-2 L12,13 L16,36 L0,25 L-16,36 L-12,13 L-30,-2 L-7,-8 Z"
+          fill="white" opacity="0.5"/>
+  </g>
+
+  <!-- Small sparkle decorations -->
+  <circle cx="95" cy="105" r="4" fill="white" opacity="0.6"/>
+  <circle cx="305" cy="115" r="3" fill="white" opacity="0.4"/>
+  <circle cx="85" cy="290" r="3.5" fill="white" opacity="0.5"/>
+  <circle cx="310" cy="280" r="2.5" fill="white" opacity="0.35"/>
+  <circle cx="140" cy="310" r="2" fill="white" opacity="0.3"/>
+  <circle cx="265" cy="95" r="2" fill="white" opacity="0.25"/>
+
+  <!-- Radio wave arcs (subtle, representing "每日电台") -->
+  <g transform="translate(200,260)" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-linecap="round">
+    <path d="M-30,0 Q-30,-15 0,-15 Q30,-15 30,0" opacity="0.6"/>
+    <path d="M-45,0 Q-45,-28 0,-28 Q45,-28 45,0" opacity="0.35"/>
+    <path d="M-60,0 Q-60,-41 0,-41 Q60,-41 60,0" opacity="0.15"/>
+  </g>
+</svg>

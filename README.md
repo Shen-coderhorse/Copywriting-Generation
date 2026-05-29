@@ -1,8 +1,8 @@
 <div align="center">
 
-<a href="https://github.com/Shen-coderhorse/Copywriting-Generation">
-  <img src="https://img.shields.io/badge/🌸_每日电台_—_治愈文案生成器-FF4D6D?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xMiAwTDIuNSA1LjdMMTIgMTZMMjEuNSA1LjdMMTIgMFoiLz48L3N2Zz4=&logoColor=white" alt="Logo">
-</a>
+<img src="./docs/logo.svg" width="200" alt="每日电台 Logo" />
+
+# 🌸 每日电台 — 治愈文案生成器
 
 ### ✨ 一键生成抖音风格治愈文案 · AI 驱动 · 三端通用
 
