@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=A%20beautiful%20pastel%20pink%20and%20coral%20gradient%20circle%20logo%20with%20a%20sparkling%20star%20inside%2C%20minimalist%20design%2C%20soft%20glow%20effect%2C%20healing%20and%20warmth%20vibe%2C%20clean%20vector%20style&image_size=square_hd" width="180" alt="Logo" />
-
-# 🌸 每日电台 — 治愈文案生成器
+<a href="https://github.com/Shen-coderhorse/Copywriting-Generation">
+  <img src="https://img.shields.io/badge/🌸_每日电台_—_治愈文案生成器-FF4D6D?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xMiAwTDIuNSA1LjdMMTIgMTZMMjEuNSA1LjdMMTIgMFoiLz48L3N2Zz4=&logoColor=white" alt="Logo">
+</a>
 
 ### ✨ 一键生成抖音风格治愈文案 · AI 驱动 · 三端通用
 
@@ -122,51 +122,49 @@ dist/每日治愈文案.apk    # 传到手机安装
 
 ## 🏗️ 系统架构
 
+### 主数据流（桌面端 / 浏览器模式）
+
 ```mermaid
-flowchart TB
-    subgraph TOP[" "]
-        direction LR
-        A1["🖥️ 桌面端<br/>static/index.html"]
-        A2["📱 手机端<br/>mobile-app/www/"]
-    end
+flowchart LR
+    A["🖥️ 桌面端<br/>static/index.html"]
+    B["⚙️ Flask 后端<br/>app.py"]
+    C["🧠 AI 引擎<br/>generator.py"]
+    D["☁️ 外部 AI API<br/>DeepSeek · 通义千问 · ChatGPT"]
 
-    subgraph MID[" "]
-        direction LR
-        B1["⚙️ Flask 后端<br/>app.py"]
-        B2["🧠 AI 引擎<br/>generator.py"]
-        B3["💾 数据层<br/>db.py"]
-    end
- 
-    subgraph BOT[" "]
-        direction LR
-        D1["☁️ DeepSeek"]
-        D2["☁️ 通义千问"]
-        D3["☁️ ChatGPT"]
-    end
+    E["💾 SQLite<br/>db.py"]
+    F["🪟 PyInstaller<br/>CopywritingApp.exe"]
 
-    subgraph PKG[" "]
-        direction LR
-        C1["🪟 PyInstaller<br/>→ CopywritingApp.exe"]
-        C2["📲 Capacitor<br/>→ 每日治愈文案.apk"]
-    end
+    A -->|"fetch / REST"| B
+    B --> C
+    C --> D
+    B --> E
+    B -.->|"打包入口"| F
 
-    A1 -->|"fetch / REST"| B1
-    B1 --> B2
-    B1 --> B3
-    B1 -.->|"打包入口"| C1
-    A2 -.->|"打包入口"| C2
-    B2 --> D1
-    B2 --> D2
-    B2 --> D3
-    A2 -.->|"直连 AI"| D1
-    A2 -.->|"直连 AI"| D2
-    A2 -.->|"直连 AI"| D3
-
-    style TOP fill:#E8F4FD,stroke:#2196F3,color:#1565C0
-    style MID fill:#FFF3E0,stroke:#FF9800,color:#E65100
-    style BOT fill:#E8F5E9,stroke:#4CAF50,color:#1B5E20
-    style PKG fill:#F3E5F5,stroke:#9C27B0,color:#4A148C
+    style A fill:#E8F4FD,stroke:#2196F3,color:#1565C0
+    style B fill:#FFF3E0,stroke:#FF9800,color:#E65100
+    style C fill:#FFF3E0,stroke:#FF9800,color:#E65100
+    style D fill:#E8F5E9,stroke:#4CAF50,color:#1B5E20
+    style E fill:#FFF3E0,stroke:#FF9800,color:#E65100
+    style F fill:#F3E5F5,stroke:#9C27B0,color:#4A148C
 ```
+
+### 手机端（独立数据流）
+
+```mermaid
+flowchart LR
+    M["📱 手机端<br/>mobile-app/www/"]
+    D2["☁️ 外部 AI API<br/>DeepSeek · 通义千问 · ChatGPT"]
+    P["📲 Capacitor<br/>每日治愈文案.apk"]
+
+    M -->|"直连 AI 调用"| D2
+    M -.->|"打包入口"| P
+
+    style M fill:#E8F4FD,stroke:#2196F3,color:#1565C0
+    style D2 fill:#E8F5E9,stroke:#4CAF50,color:#1B5E20
+    style P fill:#F3E5F5,stroke:#9C27B0,color:#4A148C
+```
+
+> 📝 **说明**：桌面端通过 Flask 后端统一调用 AI（支持知识库学习）；手机端为离线直连模式，直接调用外部 API。两者共享同一套 `generator.py` 的 Prompt 模板逻辑。
 
 ---
 
