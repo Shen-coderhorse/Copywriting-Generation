@@ -123,45 +123,49 @@ dist/每日治愈文案.apk    # 传到手机安装
 ## 🏗️ 系统架构
 
 ```mermaid
-graph TB
-    subgraph 用户层["👥 用户交互层"]
+flowchart TB
+    subgraph TOP[" "]
+        direction LR
         A1["🖥️ 桌面端<br/>static/index.html"]
         A2["📱 手机端<br/>mobile-app/www/"]
     end
 
-    subgraph 服务层["⚙️ 服务层"]
-        B1["🔧 Flask 后端<br/>app.py"]
+    subgraph MID[" "]
+        direction LR
+        B1["⚙️ Flask 后端<br/>app.py"]
         B2["🧠 AI 引擎<br/>generator.py"]
-        B3["💾 数据层<br/>db.py (SQLite)"]
+        B3["💾 数据层<br/>db.py"]
+    end
+ 
+    subgraph BOT[" "]
+        direction LR
+        D1["☁️ DeepSeek"]
+        D2["☁️ 通义千问"]
+        D3["☁️ ChatGPT"]
     end
 
-    subgraph 打包层["📦 打包层"]
+    subgraph PKG[" "]
+        direction LR
         C1["🪟 PyInstaller<br/>→ CopywritingApp.exe"]
         C2["📲 Capacitor<br/>→ 每日治愈文案.apk"]
     end
 
-    subgraph 外部服务["☁️ 外部服务"]
-        D1["DeepSeek API"]
-        D2["通义千问 API"]
-        D3["ChatGPT API"]
-    end
-
-    A1 -->|fetch/REST| B1
-    A2 -->|直接调用| D1
-    A2 -->|直接调用| D2
-    A2 -->|直接调用| D3
+    A1 -->|"fetch / REST"| B1
     B1 --> B2
     B1 --> B3
-    B1 --> C1
-    A2 --> C2
+    B1 -.->|"打包入口"| C1
+    A2 -.->|"打包入口"| C2
     B2 --> D1
     B2 --> D2
     B2 --> D3
+    A2 -.->|"直连 AI"| D1
+    A2 -.->|"直连 AI"| D2
+    A2 -.->|"直连 AI"| D3
 
-    style 用户层 fill:#E8F4FD,stroke:#2196F3,color:#1565C0
-    style 服务层 fill:#FFF3E0,stroke:#FF9800,color:#E65100
-    style 打包层 fill:#F3E5F5,stroke:#9C27B0,color:#4A148C
-    style 外部服务 fill:#E8F5E9,stroke:#4CAF50,color:#1B5E20
+    style TOP fill:#E8F4FD,stroke:#2196F3,color:#1565C0
+    style MID fill:#FFF3E0,stroke:#FF9800,color:#E65100
+    style BOT fill:#E8F5E9,stroke:#4CAF50,color:#1B5E20
+    style PKG fill:#F3E5F5,stroke:#9C27B0,color:#4A148C
 ```
 
 ---
