@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#e94560">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="治愈文案">
+<link rel="manifest" href="manifest.json">
+<title>每日治愈文案</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f0f1a;--card:#1a1a2e;--card2:#16213e;--accent:#e94560;--accent2:#0f3460;--text:#eaeaea;--text2:#a0a0b0;--border:#2a2a4a;--success:#4ecca3;--warn:#f9d56e;--radius:12px}
+body{font-family:'Microsoft YaHei','PingFang SC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden;-webkit-user-select:none;user-select:none}
+.header{width:100%;max-width:480px;padding:16px 16px 0;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:17px;font-weight:600}
+.header-btns{display:flex;gap:6px}
+.header-btns button{background:var(--card2);border:1px solid var(--border);color:var(--text2);padding:5px 12px;border-radius:16px;font-size:12px;cursor:pointer}
+.main-card{width:100%;max-width:480px;margin:12px auto;padding:20px;background:linear-gradient(135deg,var(--card),var(--card2));border-radius:var(--radius);border:1px solid var(--border);min-height:180px;position:relative;overflow:hidden}
+.greeting{font-size:15px;color:var(--warn);margin-bottom:14px;font-weight:500}
+.body-text{font-size:14px;line-height:2;color:var(--text);letter-spacing:.5px;margin-bottom:14px;white-space:pre-line}
+.tags{font-size:12px;color:var(--accent);letter-spacing:1px;margin-top:6px}
+.tags span{margin-right:6px;display:inline-block;margin-bottom:3px}
+.action-bar{width:100%;max-width:480px;display:flex;gap:8px;margin:0 auto;padding:0 16px}
+.action-bar button{flex:1;padding:11px 0;border:none;border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer}
+.btn-copy{background:var(--accent);color:#fff}
+.btn-copy.copied{background:var(--success)}
+.btn-refresh{background:var(--accent2);color:var(--text)}
+.btn-mode{background:var(--card);color:var(--text2);border:1px solid var(--border)}
+.loading{display:none;text-align:center;padding:36px 0;color:var(--text2)}
+.loading.show{display:block}
+.loading .spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty-state{text-align:center;padding:36px 0;color:var(--text2)}
+.empty-state .icon{font-size:40px;margin-bottom:10px}
+.empty-state p{font-size:13px;line-height:1.8}
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:100;justify-content:center;align-items:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);width:92%;max-width:440px;max-height:85vh;overflow-y:auto;padding:20px}
+.modal h2{font-size:15px;margin-bottom:14px}
+.modal label{display:block;font-size:12px;color:var(--text2);margin:10px 0 3px}
+.modal input,.modal textarea{width:100%;padding:9px 10px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;outline:none;font-family:inherit}
+.modal input:focus,.modal textarea:focus{border-color:var(--accent)}
+.modal textarea{resize:vertical;min-height:60px}
+.modal .btn-row{display:flex;gap:8px;margin-top:16px}
+.modal .btn-row button{flex:1;padding:9px;border:none;border-radius:6px;font-size:12px;cursor:pointer}
+.modal .btn-primary{background:var(--accent);color:#fff}
+.modal .btn-secondary{background:var(--card2);color:var(--text2);border:1px solid var(--border)}
+.tab-bar{display:flex;gap:0;margin-bottom:14px;border-bottom:1px solid var(--border)}
+.tab-bar button{flex:1;padding:7px;background:none;border:none;color:var(--text2);font-size:12px;cursor:pointer;border-bottom:2px solid transparent}
+.tab-bar button.active{color:var(--accent);border-bottom-color:var(--accent)}
+.history-list{list-style:none}
+.history-list li{padding:10px;border-bottom:1px solid var(--border);cursor:pointer}
+.history-list .h-date{font-size:11px;color:var(--text2);margin-bottom:3px}
+.history-list .h-body{font-size:12px;color:var(--text);line-height:1.5;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.history-list .h-tags{font-size:10px;color:var(--accent);margin-top:3px}
+.knowledge-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}
+.knowledge-item .k-name{font-size:12px;color:var(--text)}
+.knowledge-item button{background:none;border:1px solid var(--accent);color:var(--accent);padding:3px 8px;border-radius:4px;font-size:10px;cursor:pointer}
+.upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;position:relative;overflow:hidden}
+.upload-zone:hover{border-color:var(--accent)}
+.upload-zone .uz-icon{font-size:28px;margin-bottom:6px}
+.upload-zone .uz-text{font-size:12px;color:var(--text2)}
+.upload-zone .uz-hint{font-size:10px;color:var(--text2);margin-top:3px;opacity:.7}
+.upload-zone input[type="file"]{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-50px);background:var(--success);color:#fff;padding:8px 20px;border-radius:16px;font-size:12px;z-index:200;transition:transform .3s;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.error{background:var(--accent)}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>✨ 每日治愈文案</h1>
+  <div class="header-btns">
+    <button onclick="openModal('settings')">设置</button>
+    <button onclick="openModal('history')">历史</button>
+  </div>
+</div>
+<div class="main-card">
+  <div class="loading" id="loading"><div class="spinner"></div><p>正在生成治愈文案...</p></div>
+  <div class="empty-state" id="emptyState"><div class="icon">🌅</div><p>点击「生成文案」开始<br>请先在设置中配置 AI API Key</p></div>
+  <div id="contentArea" style="display:none">
+    <div class="greeting" id="greeting"></div>
+    <div class="body-text" id="bodyText"></div>
+    <div class="tags" id="tagsArea"></div>
+  </div>
+</div>
+<div class="action-bar">
+  <button class="btn-copy" id="btnCopy" onclick="copyText()">一键复制</button>
+  <button class="btn-refresh" onclick="generate()">生成文案</button>
+  <button class="btn-mode" id="btnMode" onclick="toggleMode()">切换晚安</button>
+</div>
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalContent"></div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+let currentMode='morning',currentFullText='';
+const WEEKDAYS=["星期一","星期二","星期三","星期四","星期五","星期六","星期日"];
+const DEFAULT_TAGS=["#早安","#晚安","#治愈","#总有一句话戳心","#生活感悟","#把生活拍出电影感","#街头随拍","#人生感悟","#温暖","#正能量","#每日一句","#心灵鸡汤","#情感","#文案","#短视频文案"];
+const PARALLEL_A=["人生","岁月","风雨","山水","时光","悲欢","春秋","聚散","行走","跋涉","寻觅","等待","相遇","告别","成长","沉淀"];
+const PARALLEL_B=["得失","起落","冷暖","悲喜","阴晴","进退","取舍","沉浮","花开","叶落","潮起","潮落","云聚","云散","梦醒","梦回"];
+const INSIGHT_A=["遇见","陪伴","经历","付出","等待","坚持","相遇","选择","失去","遗憾","错过","离别","伤痛","挫折","迷茫","等待"];
+const INSIGHT_B=["缘分","温暖","馈赠","勇气","希望","力量","礼物","成长","释怀","成长","成全","自由","坚强","智慧","清醒","答案"];
+const ACTION_COME=["满心欢喜","好好珍惜","心存感恩","温柔以待","坦然接受","微笑面对","张开双臂","静静守候","满怀期待","用心感受"];
+const ACTION_GO=["从容挥手","坦然相送","不留遗憾","微笑告别","释然放手","心怀感激","优雅转身","平静目送","轻轻放下","温暖道别"];
+const ENDING=["不恋过往","不负当下","不畏将来","一路向前","不念过去","珍惜现在","不惧未来","向阳而行","放下执念","拥抱此刻","心怀期待","步履不停","随遇而安","顺其自然","静待花开","且行且歌","心向阳光","温柔坚定","从容前行","笑对人生"];
+
+function S(k,v){if(v===undefined){try{return JSON.parse(localStorage.getItem('cw_'+k))}catch(e){return null}}localStorage.setItem('cw_'+k,JSON.stringify(v))}
+function showToast(m,e){const t=document.getElementById('toast');t.textContent=m;t.className='toast show'+(e?' error':'');setTimeout(()=>t.className='toast',1500)}
+function getDateGreeting(m){const n=new Date();return (m==='morning'?'早安':'晚安')+'，今天是'+n.getMonth()+1+'月'+n.getDate()+'日，'+WEEKDAYS[n.getDay()]}
+function getDateKey(){const n=new Date();return n.getFullYear()+'-'+(n.getMonth()+1)+'-'+n.getDate()}
+
+const LOCAL_STYLES=[
+  function(g,d,w){return g+'，今天是'+d+'，'+w+'\n山高一程，水远一程，风雨一程，晴暖一程\n所有低谷皆是铺垫，所有失去皆是馈赠\n来时全心奔赴，走时淡然回首\n煮雪烹茶，听雨眠云，不问归期，只问本心'},
+  function(g,d,w){return g+'，今天是'+d+'，'+w+'\n你走过的每一条弯路，都是必经之路\n不必追赶，不必慌张\n花开有期，你也有期\n心若不动，风又奈何'},
+  function(g,d,w){return g+'，今天是'+d+'，'+w+'\n有些路，走着走着就亮了\n有些人，遇着遇着就暖了\n别急，好戏还在后头\n愿你眼里有光，心中有海，脚下有路'},
+  function(g,d,w){return g+'，今天是'+d+'，'+w+'\n生活不会一直温柔，但你可以\n世界不会一直晴朗，但你可以\n做自己该做的事，走自己该走的路\n温柔且坚定，从容且清醒'},
+  function(g,d,w){return g+'，今天是'+d+'，'+w+'\n风会记得一朵花的香，时光会记得你努力的样子\n不必事事圆满，但求事事甘心\n慢慢来，比较快\n静水深流，厚积薄发'}
+];
+
+function localGenerate(mode){
+  const n=new Date(),g=mode==='morning'?'早安':'晚安';
+  const ds=n.getMonth()+1+'月'+n.getDate()+'日',w=WEEKDAYS[n.getDay()];
+  const idx=Math.floor(Math.random()*LOCAL_STYLES.length);
+  return LOCAL_STYLES[idx](g,ds,w);
+}
+function sample(a,n){const c=[...a];const r=[];for(let i=0;i<n&&c.length;i++){const idx=Math.floor(Math.random()*c.length);r.push(c.splice(idx,1)[0])}return r}
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+
+function buildTags(mode){
+  const tc=S('tags');const tl=tc?tc.split(',').map(t=>t.trim()).filter(Boolean):DEFAULT_TAGS;
+  const mt=mode==='morning'?'#早安':'#晚安';const ot=tl.filter(t=>t!==mt);
+  const sel=sample(ot,Math.min(4,ot.length));return mt+' '+sel.join(' ');
+}
+
+async function generate(){
+  const ld=document.getElementById('loading'),em=document.getElementById('emptyState'),ca=document.getElementById('contentArea');
+  ld.classList.add('show');em.style.display='none';ca.style.display='none';
+  const apiKey=S('api_key'),apiBase=S('api_base')||'https://api.openai.com/v1',model=S('model')||'gpt-4o-mini';
+  let result=null;
+  if(apiKey){
+    try{
+      const greeting=currentMode==='morning'?'早安':'晚安';
+      const theme=currentMode==='morning'?'人生、遇见、成长、得失、释怀、活在当下':'夜晚、宁静、放下、感恩、释怀、安眠';
+      const n=new Date(),ds=n.getMonth()+1+'月'+n.getDate()+'日',w=WEEKDAYS[n.getDay()];
+      const knowledge=S('knowledge')||'';
+      const ks=knowledge?'\n\n参考以下知识库的风格和意境：\n'+knowledge:'';
+      const examples=currentMode==='morning'
+        ?'早安，今天是5月28日，星期四\n山高一程，水远一程，风雨一程，晴暖一程\n所有低谷皆是铺垫，所有失去皆是馈赠\n来时全心奔赴，走时淡然回首\n煮雪烹茶，听雨眠云，不问归期，只问本心\n\n---\n早安，今天是5月27日，星期三\n你走过的每一条弯路，都是必经之路\n不必追赶，不必慌张\n花开有期，你也有期\n心若不动，风又奈何'
+        :'晚安，今天是5月28日，星期四\n把白天的疲惫交给夜色\n把未完成的事交给明天\n你已经很努力了\n今夜，只管安心入眠\n\n---\n晚安，今天是5月27日，星期三\n夜深了，世界安静了\n你的心事也该放下了\n明天又是新的一天\n愿你梦里有星辰，醒来有阳光';
+      const prompt='生成一条抖音'+greeting+'治愈文案，今天是'+ds+'，'+w+'。\n要求：文字温柔治愈，有画面感，有温度。主题围绕'+theme+'。30-60字，短句为主，适合短视频配音。风格自由发挥，可以排比对仗也可以散文诗也可以一句话直击人心。格式不限，不要每次都用同样的结构。第一行写问候语（'+greeting+'，今天是X月X日，星期X），后面自由发挥。\n以下是几种不同风格的示例，仅供参考，请创造新的风格和表达：\n'+examples+ks+'\n请直接输出文案内容，不要任何解释。';
+      const controller=new AbortController();
+      const timer=setTimeout(()=>controller.abort(),60000);
+      const resp=await fetch(apiBase+'/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},body:JSON.stringify({model:model,messages:[{role:'system',content:'你是一位风格多变的抖音治愈文案创作者。你的文字时而温柔如水，时而锋利如刀，时而诗意盎然，时而朴实真挚。每次创作都追求不同的表达方式和结构，绝不重复自己。'},{role:'user',content:prompt}],temperature:1.0,max_tokens:300,enable_thinking:false}),signal:controller.signal});
+      clearTimeout(timer);
+      const data=await resp.json();
+      if(data.choices&&data.choices[0])result=data.choices[0].message.content.trim();
+      else{
+        let errMsg=data.error?.message||'API调用失败';
+        if(errMsg.includes('401')||errMsg.includes('Incorrect API key'))errMsg='API Key 无效，请检查设置';
+        else if(errMsg.includes('429')||errMsg.includes('rate_limit'))errMsg='API 调用频率超限，请稍后再试';
+        else if(errMsg.includes('404')||errMsg.includes('model_not_found'))errMsg='模型不存在，请检查模型名称';
+        throw new Error(errMsg);
+      }
+    }catch(e){
+      showToast((e.name==='AbortError'?'请求超时':e.message),true);
+      result=localGenerate(currentMode);
+    }
+  }else{result=localGenerate(currentMode)}
+  ld.classList.remove('show');
+  if(!result){em.style.display='block';return}
+  const lines=result.trim().split('\n').map(l=>l.trim()).filter(Boolean);
+  const gl=getDateGreeting(currentMode);
+  const bl=lines.filter(l=>!l.startsWith('早安')&&!l.startsWith('晚安'));
+  const body=bl.join('\n'),tags=buildTags(currentMode);
+  const full=gl+'\n'+body+'\n'+tags;
+  const parsed={greeting:gl,body,tags,full_text:full};
+  displayResult(parsed);
+  saveHistory(parsed);
+}
+
+function displayResult(d){
+  document.getElementById('greeting').textContent=d.greeting;
+  document.getElementById('bodyText').textContent=d.body;
+  document.getElementById('tagsArea').innerHTML=d.tags.split(/\s+/).filter(Boolean).map(t=>'<span>'+t+'</span>').join('');
+  currentFullText=d.full_text;
+  document.getElementById('contentArea').style.display='block';
+  document.getElementById('emptyState').style.display='none';
+}
+
+function saveHistory(d){
+  const h=S('history')||[];h.unshift({date:getDateKey(),greeting:d.greeting,body:d.body,tags:d.tags,full_text:d.full_text,mode:currentMode,ts:Date.now()});
+  if(h.length>365)h.length=365;S('history',h);
+}
+
+function copyText(){
+  if(!currentFullText){showToast('暂无文案',true);return}
+  navigator.clipboard.writeText(currentFullText).then(()=>{const b=document.getElementById('btnCopy');b.classList.add('copied');b.textContent='已复制 ✓';showToast('复制成功！');setTimeout(()=>{b.classList.remove('copied');b.textContent='一键复制'},1500)}).catch(()=>{const t=document.createElement('textarea');t.value=currentFullText;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);showToast('复制成功！')});
+}
+
+function toggleMode(){
+  currentMode=currentMode==='morning'?'night':'morning';
+  document.getElementById('btnMode').textContent=currentMode==='morning'?'切换晚安':'切换早安';
+  document.getElementById('contentArea').style.display='none';
+  document.getElementById('emptyState').style.display='block';
+}
+
+function openModal(type){
+  const mc=document.getElementById('modalContent');
+  if(type==='settings'){
+    mc.innerHTML='<h2>⚙️ 设置</h2><div class="tab-bar"><button class="active" onclick="switchTab(this,\'t-ai\')">AI配置</button><button onclick="switchTab(this,\'t-tags\')">标签</button><button onclick="switchTab(this,\'t-kb\')">知识库</button></div><div id="t-ai"><label>API Base URL</label><input id="cfgBase" placeholder="https://api.openai.com/v1"><label>API Key</label><input id="cfgKey" type="password" placeholder="sk-..."><label>模型名称</label><input id="cfgModel" placeholder="gpt-4o-mini"></div><div id="t-tags" style="display:none"><label>话题标签（逗号分隔）</label><textarea id="cfgTags" rows="3" placeholder="#早安,#治愈..."></textarea></div><div id="t-kb" style="display:none"><label>上传知识库文件</label><div class="upload-zone" id="uploadZone"><div class="uz-icon">📁</div><div class="uz-text">点击选择或拖拽文件</div><div class="uz-hint">支持 .docx .pdf .txt</div><input type="file" id="fileInput" accept=".docx,.pdf,.txt" onchange="handleFile(event)"></div><div id="kbList" style="margin-top:10px"></div></div><div class="btn-row"><button class="btn-secondary" onclick="closeModal()">取消</button><button class="btn-primary" onclick="saveSettings()">保存</button></div>';
+    loadSettings();loadKBList();setTimeout(initUpload,100);
+  }else if(type==='history'){
+    mc.innerHTML='<h2>📜 历史记录</h2><ul class="history-list" id="hList"></ul>';loadHistory();
+  }
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function switchTab(b,id){b.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('active'));b.classList.add('active');['t-ai','t-tags','t-kb'].forEach(i=>{const e=document.getElementById(i);if(e)e.style.display=i===id?'block':'none'})}
+
+function loadSettings(){
+  const d={api_base:S('api_base'),api_key:S('api_key'),model:S('model'),tags:S('tags')};
+  const b=document.getElementById('cfgBase'),k=document.getElementById('cfgKey'),m=document.getElementById('cfgModel'),t=document.getElementById('cfgTags');
+  if(b&&d.api_base)b.value=d.api_base;if(k&&d.api_key)k.value=d.api_key;if(m&&d.model)m.value=d.model;if(t&&d.tags)t.value=d.tags;
+}
+
+function saveSettings(){
+  const b=document.getElementById('cfgBase')?.value,k=document.getElementById('cfgKey')?.value,m=document.getElementById('cfgModel')?.value,t=document.getElementById('cfgTags')?.value;
+  if(b)S('api_base',b);if(k)S('api_key',k);if(m)S('model',m);if(t!==undefined)S('tags',t);
+  showToast('设置已保存');closeModal();
+}
+
+function handleFile(e){const f=e.target.files[0];if(f)readFile(f)}
+function initUpload(){const z=document.getElementById('uploadZone');if(!z)return;z.addEventListener('dragover',e=>{e.preventDefault();z.style.borderColor='var(--accent)'});z.addEventListener('dragleave',()=>{z.style.borderColor='var(--border)'});z.addEventListener('drop',e=>{e.preventDefault();z.style.borderColor='var(--border)';const f=e.dataTransfer.files[0];if(f)readFile(f)})}
+
+async function readFile(file){
+  const ext=file.name.split('.').pop().toLowerCase();
+  if(!['docx','pdf','txt'].includes(ext)){showToast('不支持该格式',true);return}
+  showToast('正在解析...');
+  try{
+    let text='';
+    if(ext==='txt'){text=await file.text()}
+    else if(ext==='docx'){
+      const buf=await file.arrayBuffer();const JSZip=window.JSZip||(await import('https://cdn.jsdelivr.net/npm/jszip@3/dist/jszip.min.js')).default;
+      const zip=await JSZip.loadAsync(buf);const doc=await zip.file('word/document.xml').async('string');
+      const parser=new DOMParser();const xml=parser.parseFromString(doc,'text/xml');
+      const ns='http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+      text=Array.from(xml.getElementsByTagNameNS(ns,'t')).map(e=>e.textContent).join('');
+    }else if(ext==='pdf'){
+      const buf=await file.arrayBuffer();const pdfjsLib=window.pdfjsLib||(await import('https://cdn.jsdelivr.net/npm/pdfjs-dist@3/dist/pdf.min.js'));
+      if(!pdfjsLib.GlobalWorkerOptions.workerSrc)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@3/build/pdf.worker.min.js';
+      const pdf=await pdfjsLib.getDocument({data:buf}).promise;const pages=[];
+      for(let i=1;i<=pdf.numPages;i++){const pg=await pdf.getPage(i);const tc=await pg.getTextContent();pages.push(tc.items.map(it=>it.str).join(' '))}
+      text=pages.join('\n');
+    }
+    const kb=S('knowledge_list')||[];kb.push({name:file.name,content:text,ts:Date.now()});S('knowledge_list',kb);
+    const combined=S('knowledge')||'';S('knowledge',combined+(combined?'\n\n':'')+'【'+file.name+'】\n'+text);
+    showToast('知识库已添加');loadKBList();
+  }catch(e){showToast('解析失败: '+e.message,true)}
+}
+
+function loadKBList(){
+  const kb=S('knowledge_list')||[];const el=document.getElementById('kbList');if(!el)return;
+  if(!kb.length){el.innerHTML='<p style="font-size:11px;color:var(--text2)">暂无知识库</p>';return}
+  el.innerHTML=kb.map((k,i)=>'<div class="knowledge-item"><div><div class="k-name">'+k.name+'</div></div><button onclick="delKB('+i+')">删除</button></div>').join('');
+}
+
+function delKB(i){
+  const kb=S('knowledge_list')||[];kb.splice(i,1);S('knowledge_list',kb);
+  const parts=kb.map(k=>'【'+k.name+'】\n'+k.content);S('knowledge',parts.join('\n\n'));
+  loadKBList();showToast('已删除');
+}
+
+function loadHistory(){
+  const h=S('history')||[];const el=document.getElementById('hList');if(!el)return;
+  if(!h.length){el.innerHTML='<li style="padding:16px;text-align:center;color:var(--text2)">暂无历史</li>';return}
+  el.innerHTML=h.slice(0,50).map(r=>'<li onclick="copyHist(this)" data-text="'+encodeURIComponent(r.full_text)+'"><div class="h-date">'+r.date+' '+(r.mode==='morning'?'🌅':'🌙')+'</div><div class="h-body">'+r.body+'</div><div class="h-tags">'+r.tags+'</div></li>').join('');
+}
+
+function copyHist(el){navigator.clipboard.writeText(decodeURIComponent(el.dataset.text)).then(()=>showToast('已复制'))}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('show')}
+</script>
+</body>
+</html>

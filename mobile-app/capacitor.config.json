@@ -1,0 +1,17 @@
+{
+  "appId": "com.copywriting.healing",
+  "appName": "每日治愈文案",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": true,
+      "androidScaleType": "CENTER_CROP",
+      "splashFullScreen": true,
+      "splashImmersive": true,
+      "backgroundColor": "#0f0f1a"
+    }
+  }
+}

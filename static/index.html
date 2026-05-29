@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#e94560">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="治愈文案">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+    <title>每日治愈文案生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        :root {
+            --bg: #0f0f1a;
+            --card: #1a1a2e;
+            --card2: #16213e;
+            --accent: #e94560;
+            --accent2: #0f3460;
+            --text: #eaeaea;
+            --text2: #a0a0b0;
+            --border: #2a2a4a;
+            --success: #4ecca3;
+            --warn: #f9d56e;
+            --radius: 16px;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', 'Helvetica Neue', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .app-layout {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .left-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 60px;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .left-panel::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            right: -200px;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(233, 69, 96, .06), transparent);
+            pointer-events: none;
+        }
+
+        .left-panel::after {
+            content: '';
+            position: absolute;
+            bottom: -150px;
+            left: -150px;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(15, 52, 96, .15), transparent);
+            pointer-events: none;
+        }
+
+        .brand {
+            text-align: center;
+            margin-bottom: 48px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand-icon {
+            font-size: 56px;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .brand h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: 2px;
+        }
+
+        .brand p {
+            font-size: 14px;
+            color: var(--text2);
+            margin-top: 8px;
+            letter-spacing: 1px;
+        }
+
+        .main-card {
+            width: 100%;
+            max-width: 640px;
+            padding: 40px 48px;
+            background: linear-gradient(145deg, var(--card), var(--card2));
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            min-height: 260px;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, .3);
+        }
+
+        .greeting {
+            font-size: 20px;
+            color: var(--warn);
+            margin-bottom: 24px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .body-text {
+            font-size: 18px;
+            line-height: 2.2;
+            color: var(--text);
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+            white-space: pre-line;
+        }
+
+        .tags {
+            font-size: 14px;
+            color: var(--accent);
+            letter-spacing: 1.5px;
+            margin-top: 12px;
+        }
+
+        .tags span {
+            margin-right: 12px;
+            display: inline-block;
+            margin-bottom: 6px;
+            background: rgba(233, 69, 96, .1);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .action-bar {
+            display: flex;
+            gap: 14px;
+            margin-top: 32px;
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 640px;
+        }
+
+        .action-bar button {
+            flex: 1;
+            padding: 16px 0;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .25s;
+            letter-spacing: 1px;
+        }
+
+        .btn-copy {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(233, 69, 96, .3);
+        }
+
+        .btn-copy:hover {
+            background: #d63851;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(233, 69, 96, .4);
+        }
+
+        .btn-copy.copied {
+            background: var(--success);
+            box-shadow: 0 4px 16px rgba(78, 204, 163, .3);
+        }
+
+        .btn-refresh {
+            background: var(--accent2);
+            color: var(--text);
+            box-shadow: 0 4px 16px rgba(15, 52, 96, .3);
+        }
+
+        .btn-refresh:hover {
+            background: #1a4a8a;
+            transform: translateY(-2px);
+        }
+
+        .btn-mode {
+            background: var(--card);
+            color: var(--text2);
+            border: 1px solid var(--border);
+        }
+
+        .btn-mode:hover {
+            border-color: var(--accent);
+            color: var(--text);
+            transform: translateY(-2px);
+        }
+
+        .right-panel {
+            width: 380px;
+            background: var(--card);
+            border-left: 1px solid var(--border);
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+
+        .right-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .right-panel::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+
+        .right-panel::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        .right-panel::-webkit-scrollbar-thumb:hover {
+            background: var(--text2);
+        }
+
+        .left-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .left-panel::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .left-panel::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        .right-panel h3 {
+            font-size: 15px;
+            color: var(--text2);
+            font-weight: 500;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .right-panel h3::before {
+            content: '';
+            width: 3px;
+            height: 14px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .panel-section {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            transition: border-color .2s;
+        }
+
+        .panel-section:hover {
+            border-color: rgba(233, 69, 96, .3);
+        }
+
+        .panel-section label {
+            display: block;
+            font-size: 13px;
+            color: var(--text2);
+            margin: 12px 0 6px;
+        }
+
+        .panel-section label:first-child {
+            margin-top: 0;
+        }
+
+        .panel-section input,
+        .panel-section textarea,
+        .panel-section select {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--card2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 14px;
+            outline: none;
+            font-family: inherit;
+            transition: border-color .2s;
+        }
+
+        .panel-section input:focus,
+        .panel-section textarea:focus {
+            border-color: var(--accent);
+        }
+
+        .panel-section textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .panel-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .2s;
+            margin-top: 16px;
+        }
+
+        .panel-btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .panel-btn-primary:hover {
+            background: #d63851;
+        }
+
+        .history-list {
+            list-style: none;
+        }
+
+        .history-list li {
+            padding: 14px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background .2s;
+            border-radius: 8px;
+            margin-bottom: 4px;
+        }
+
+        .history-list li:hover {
+            background: var(--card2);
+        }
+
+        .history-list .h-date {
+            font-size: 12px;
+            color: var(--text2);
+            margin-bottom: 6px;
+        }
+
+        .history-list .h-body {
+            font-size: 14px;
+            color: var(--text);
+            line-height: 1.7;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .history-list .h-tags {
+            font-size: 12px;
+            color: var(--accent);
+            margin-top: 6px;
+        }
+
+        .knowledge-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .knowledge-item .k-name {
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        .knowledge-item .k-time {
+            font-size: 11px;
+            color: var(--text2);
+            margin-top: 2px;
+        }
+
+        .knowledge-item button {
+            background: none;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .knowledge-item button:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 28px;
+            text-align: center;
+            cursor: pointer;
+            transition: all .2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--accent);
+            background: rgba(233, 69, 96, .05);
+        }
+
+        .upload-zone.drag-over {
+            border-color: var(--accent);
+            background: rgba(233, 69, 96, .1);
+        }
+
+        .upload-zone .uz-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .upload-zone .uz-text {
+            font-size: 14px;
+            color: var(--text2);
+            line-height: 1.6;
+        }
+
+        .upload-zone .uz-hint {
+            font-size: 12px;
+            color: var(--text2);
+            margin-top: 6px;
+            opacity: .7;
+        }
+
+        .upload-zone input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .upload-progress {
+            display: none;
+            margin-top: 10px;
+            padding: 10px 14px;
+            background: var(--card2);
+            border-radius: 8px;
+            font-size: 13px;
+            color: var(--text2);
+        }
+
+        .upload-progress.show {
+            display: block;
+        }
+
+        .upload-progress .up-name {
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        .upload-progress .up-bar {
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .upload-progress .up-bar-inner {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 2px;
+            transition: width .3s;
+            width: 0;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 60px 0;
+            color: var(--text2);
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .loading .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 0;
+            color: var(--text2);
+        }
+
+        .empty-state .icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+            line-height: 2;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, .6);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            width: 90%;
+            max-width: 560px;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 28px;
+        }
+
+        .modal h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+
+        .modal label {
+            display: block;
+            font-size: 14px;
+            color: var(--text2);
+            margin: 14px 0 6px;
+        }
+
+        .modal input,
+        .modal textarea,
+        .modal select {
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 14px;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .modal input:focus,
+        .modal textarea:focus {
+            border-color: var(--accent);
+        }
+
+        .modal textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .modal .btn-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .modal .btn-row button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .modal .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .modal .btn-primary:hover {
+            background: #d63851;
+        }
+
+        .modal .btn-secondary {
+            background: var(--card2);
+            color: var(--text2);
+            border: 1px solid var(--border);
+        }
+
+        .modal .btn-secondary:hover {
+            border-color: var(--text2);
+        }
+
+        .tab-bar {
+            display: flex;
+            gap: 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab-bar button {
+            flex: 1;
+            padding: 10px;
+            background: none;
+            border: none;
+            color: var(--text2);
+            font-size: 14px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all .2s;
+        }
+
+        .tab-bar button.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .toast {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-60px);
+            background: var(--success);
+            color: #fff;
+            padding: 12px 28px;
+            border-radius: 24px;
+            font-size: 14px;
+            z-index: 200;
+            transition: transform .3s;
+            pointer-events: none;
+            box-shadow: 0 4px 16px rgba(78, 204, 163, .3);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.error {
+            background: var(--accent);
+            box-shadow: 0 4px 16px rgba(233, 69, 96, .3);
+        }
+
+        .mobile-header {
+            display: none;
+        }
+
+        @media (max-width: 900px) {
+            .app-layout {
+                flex-direction: column;
+                height: auto;
+                overflow: auto;
+            }
+
+            .left-panel {
+                padding: 20px 16px;
+                min-height: auto;
+            }
+
+            .brand {
+                margin-bottom: 24px;
+            }
+
+            .brand-icon {
+                font-size: 36px;
+            }
+
+            .brand h1 {
+                font-size: 20px;
+            }
+
+            .brand p {
+                font-size: 12px;
+            }
+
+            .main-card {
+                padding: 24px;
+                min-height: 180px;
+            }
+
+            .greeting {
+                font-size: 16px;
+                margin-bottom: 16px;
+            }
+
+            .body-text {
+                font-size: 15px;
+                line-height: 2;
+                margin-bottom: 16px;
+            }
+
+            .tags span {
+                padding: 3px 8px;
+                font-size: 12px;
+            }
+
+            .action-bar {
+                margin-top: 20px;
+            }
+
+            .action-bar button {
+                padding: 12px 0;
+                font-size: 14px;
+            }
+
+            .right-panel {
+                width: 100%;
+                border-left: none;
+                border-top: 1px solid var(--border);
+                max-height: none;
+                padding: 20px 16px;
+            }
+
+            .mobile-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 12px 16px;
+                background: var(--card);
+                border-bottom: 1px solid var(--border);
+            }
+
+            .mobile-header h1 {
+                font-size: 17px;
+                font-weight: 600;
+            }
+
+            .mobile-header-btns {
+                display: flex;
+                gap: 8px;
+            }
+
+            .mobile-header-btns button {
+                background: var(--card2);
+                border: 1px solid var(--border);
+                color: var(--text2);
+                padding: 6px 14px;
+                border-radius: 20px;
+                font-size: 13px;
+                cursor: pointer;
+            }
+
+            .desktop-only {
+                display: none;
+            }
+        }
+
+        @media (min-width: 901px) {
+            .mobile-header {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="mobile-header">
+        <h1>✨ 每日治愈文案</h1>
+        <div class="mobile-header-btns">
+            <button onclick="openModal('settings')">设置</button>
+            <button onclick="openModal('history')">历史</button>
+        </div>
+    </div>
+
+    <div class="app-layout">
+        <div class="left-panel">
+            <div class="brand">
+                <span class="brand-icon">✨</span>
+                <h1>每日治愈文案生成器</h1>
+                <p>一键生成，温暖每一天</p>
+            </div>
+
+            <div class="main-card" id="mainCard">
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>正在生成治愈文案...</p>
+                </div>
+                <div class="empty-state" id="emptyState">
+                    <div class="icon">🌅</div>
+                    <p>点击下方「生成文案」开始<br>或前往右侧面板配置 AI API Key</p>
+                </div>
+                <div id="contentArea" style="display:none">
+                    <div class="greeting" id="greeting"></div>
+                    <div class="body-text" id="bodyText"></div>
+                    <div class="tags" id="tagsArea"></div>
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <button class="btn-copy" id="btnCopy" onclick="copyText()">一键复制</button>
+                <button class="btn-refresh" onclick="generate()">生成文案</button>
+                <button class="btn-mode" id="btnMode" onclick="toggleMode()">切换晚安</button>
+            </div>
+        </div>
+
+        <div class="right-panel desktop-only">
+            <div class="panel-section">
+                <h3>AI 配置</h3>
+                <label>API Base URL</label>
+                <input id="sideApiBase" placeholder="https://api.openai.com/v1">
+                <label>API Key</label>
+                <input id="sideApiKey" type="password" placeholder="sk-...">
+                <label>模型名称</label>
+                <input id="sideModel" placeholder="gpt-4o-mini">
+                <button class="panel-btn panel-btn-primary" onclick="saveSideSettings()">保存配置</button>
+            </div>
+
+            <div class="panel-section">
+                <h3>知识库</h3>
+                <div class="upload-zone" id="sideUploadZone">
+                    <div class="uz-icon">📁</div>
+                    <div class="uz-text">点击选择文件 或 拖拽文件到此处</div>
+                    <div class="uz-hint">支持 .docx .pdf .txt 格式，最大 16MB</div>
+                    <input type="file" id="sideFileInput" accept=".docx,.pdf,.txt" onchange="handleSideFileSelect(event)">
+                </div>
+                <div class="upload-progress" id="sideUploadProgress">
+                    <div class="up-name" id="sideUploadFileName"></div>
+                    <div class="up-bar"><div class="up-bar-inner" id="sideUploadBar"></div></div>
+                </div>
+                <div id="sideKnowledgeList" style="margin-top:12px"></div>
+            </div>
+
+            <div class="panel-section">
+                <h3>历史记录</h3>
+                <ul class="history-list" id="sideHistoryList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+        <div class="modal" id="modalContent"></div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let currentMode = 'morning';
+        let currentFullText = '';
+
+        function showToast(msg, isError) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = 'toast show' + (isError ? ' error' : '');
+            setTimeout(() => t.className = 'toast', 1500);
+        }
+
+        async function api(url, method, data) {
+            const opts = { method, headers: { 'Content-Type': 'application/json' } };
+            if (data) opts.body = JSON.stringify(data);
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 60000);
+            opts.signal = controller.signal;
+            try {
+                const res = await fetch(url, opts);
+                return await res.json();
+            } finally {
+                clearTimeout(timeout);
+            }
+        }
+
+        async function generate() {
+            const loading = document.getElementById('loading');
+            const empty = document.getElementById('emptyState');
+            const content = document.getElementById('contentArea');
+            loading.classList.add('show');
+            empty.style.display = 'none';
+            content.style.display = 'none';
+
+            try {
+                const result = await api('/api/generate', 'POST', { mode: currentMode });
+
+                if (!result.success) {
+                    let errMsg = result.error || '生成失败';
+                    if (errMsg.includes('401') || errMsg.includes('invalid_api_key') || errMsg.includes('Incorrect API key')) {
+                        errMsg = 'API Key 无效，请检查配置';
+                    } else if (errMsg.includes('429') || errMsg.includes('rate_limit')) {
+                        errMsg = 'API 调用频率超限，请稍后再试';
+                    } else if (errMsg.includes('404') || errMsg.includes('model_not_found')) {
+                        errMsg = '模型不存在，请检查模型名称';
+                    } else if (errMsg.includes('timeout') || errMsg.includes('timed out')) {
+                        errMsg = 'API 请求超时，请检查网络';
+                    }
+                    showToast(errMsg, true);
+                    empty.style.display = 'block';
+                    return;
+                }
+
+                displayResult(result.data);
+            } catch (e) {
+                showToast('请求失败: ' + (e.name === 'AbortError' ? '请求超时，请检查网络' : e.message), true);
+                empty.style.display = 'block';
+            } finally {
+                loading.classList.remove('show');
+            }
+        }
+
+        function displayResult(data) {
+            const content = document.getElementById('contentArea');
+            document.getElementById('greeting').textContent = data.greeting;
+            document.getElementById('bodyText').textContent = data.body;
+            const tagsArea = document.getElementById('tagsArea');
+            tagsArea.innerHTML = data.tags.split(/\s+/).filter(Boolean).map(t => `<span>${t}</span>`).join('');
+            currentFullText = data.full_text;
+            content.style.display = 'block';
+            document.getElementById('emptyState').style.display = 'none';
+        }
+
+        async function loadToday() {
+            const result = await api('/api/today?mode=' + currentMode);
+            if (result.success && result.data) {
+                displayResult(result.data);
+            }
+        }
+
+        function copyText() {
+            if (!currentFullText) {
+                showToast('暂无文案可复制', true);
+                return;
+            }
+            navigator.clipboard.writeText(currentFullText).then(() => {
+                const btn = document.getElementById('btnCopy');
+                btn.classList.add('copied');
+                btn.textContent = '已复制 ✓';
+                showToast('复制成功，去抖音粘贴吧！');
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.textContent = '一键复制';
+                }, 1500);
+            }).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = currentFullText;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                showToast('复制成功！');
+            });
+        }
+
+        function toggleMode() {
+            currentMode = currentMode === 'morning' ? 'night' : 'morning';
+            const btn = document.getElementById('btnMode');
+            btn.textContent = currentMode === 'morning' ? '切换晚安' : '切换早安';
+            document.getElementById('contentArea').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'block';
+            loadToday();
+        }
+
+        function openModal(type) {
+            const overlay = document.getElementById('modalOverlay');
+            const mc = document.getElementById('modalContent');
+
+            if (type === 'settings') {
+                mc.innerHTML = `
+      <h2>⚙️ 设置</h2>
+      <div class="tab-bar">
+        <button class="active" onclick="switchSettingsTab(this,'tab-ai')">AI 配置</button>
+        <button onclick="switchSettingsTab(this,'tab-tags')">标签管理</button>
+        <button onclick="switchSettingsTab(this,'tab-schedule')">定时任务</button>
+        <button onclick="switchSettingsTab(this,'tab-knowledge')">知识库</button>
+      </div>
+      <div id="tab-ai">
+        <label>API Base URL</label>
+        <input id="cfgApiBase" placeholder="https://api.openai.com/v1">
+        <label>API Key</label>
+        <input id="cfgApiKey" type="password" placeholder="sk-...">
+        <label>模型名称</label>
+        <input id="cfgModel" placeholder="gpt-4o-mini">
+      </div>
+      <div id="tab-tags" style="display:none">
+        <label>话题标签（逗号分隔）</label>
+        <textarea id="cfgTags" rows="4" placeholder="#早安,#治愈,#生活感悟..."></textarea>
+      </div>
+      <div id="tab-schedule" style="display:none">
+        <label>每日自动生成时间</label>
+        <input id="cfgSchedule" type="time" value="08:00">
+        <p style="font-size:12px;color:var(--text2);margin-top:8px">设置后，每天到点自动生成文案</p>
+      </div>
+      <div id="tab-knowledge" style="display:none">
+        <label>上传知识库文件</label>
+        <div class="upload-zone" id="uploadZone">
+          <div class="uz-icon">📁</div>
+          <div class="uz-text">点击选择文件 或 拖拽文件到此处</div>
+          <div class="uz-hint">支持 .docx .pdf .txt 格式，最大 16MB</div>
+          <input type="file" id="fileInput" accept=".docx,.pdf,.txt" onchange="handleFileSelect(event)">
+        </div>
+        <div class="upload-progress" id="uploadProgress">
+          <div class="up-name" id="uploadFileName"></div>
+          <div class="up-bar"><div class="up-bar-inner" id="uploadBar"></div></div>
+        </div>
+        <div id="knowledgeList" style="margin-top:12px"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-secondary" onclick="closeModal()">取消</button>
+        <button class="btn-primary" onclick="saveSettings()">保存</button>
+      </div>
+    `;
+                loadSettings();
+                loadKnowledgeList();
+                setTimeout(initUploadZone, 100);
+            } else if (type === 'history') {
+                mc.innerHTML = `
+      <h2>📜 历史记录</h2>
+      <ul class="history-list" id="historyList"></ul>
+    `;
+                loadHistory();
+            }
+
+            overlay.classList.add('show');
+        }
+
+        function switchSettingsTab(btn, tabId) {
+            btn.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            ['tab-ai', 'tab-tags', 'tab-schedule', 'tab-knowledge'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = id === tabId ? 'block' : 'none';
+            });
+        }
+
+        async function loadSettings() {
+            const result = await api('/api/config', 'GET');
+            if (result.success) {
+                const d = result.data;
+                const base = document.getElementById('cfgApiBase');
+                const key = document.getElementById('cfgApiKey');
+                const model = document.getElementById('cfgModel');
+                const tags = document.getElementById('cfgTags');
+                const schedule = document.getElementById('cfgSchedule');
+                if (base && d.api_base) base.value = d.api_base;
+                if (key && d.api_key) key.value = d.api_key;
+                if (model && d.model) model.value = d.model;
+                if (tags && d.tags) tags.value = d.tags;
+                if (schedule && d.schedule_time) schedule.value = d.schedule_time;
+            }
+        }
+
+        async function saveSettings() {
+            const base = document.getElementById('cfgApiBase')?.value;
+            const key = document.getElementById('cfgApiKey')?.value;
+            const model = document.getElementById('cfgModel')?.value;
+            const tags = document.getElementById('cfgTags')?.value;
+            const schedule = document.getElementById('cfgSchedule')?.value;
+
+            const data = {};
+            if (base) data.api_base = base;
+            if (key && !key.endsWith('...')) data.api_key = key;
+            if (model) data.model = model;
+            if (tags !== undefined) data.tags = tags;
+            if (schedule) data.schedule_time = schedule;
+
+            const result = await api('/api/config', 'POST', data);
+            if (result.success) {
+                showToast('设置已保存');
+                closeModal();
+            } else {
+                showToast(result.error || '保存失败', true);
+            }
+        }
+
+        async function addKnowledge() {
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) uploadFile(file);
+        }
+
+        function handleSideFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) uploadFile(file, 'side');
+        }
+
+        function initUploadZone() {
+            const zone = document.getElementById('uploadZone');
+            if (!zone) return;
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                zone.classList.add('drag-over');
+            });
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('drag-over');
+            });
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                const file = e.dataTransfer.files[0];
+                if (file) uploadFile(file);
+            });
+        }
+
+        function initSideUploadZone() {
+            const zone = document.getElementById('sideUploadZone');
+            if (!zone) return;
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                zone.classList.add('drag-over');
+            });
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('drag-over');
+            });
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                const file = e.dataTransfer.files[0];
+                if (file) uploadFile(file, 'side');
+            });
+        }
+
+        async function uploadFile(file, prefix) {
+            prefix = prefix || '';
+            const ext = file.name.split('.').pop().toLowerCase();
+            const allowed = ['docx', 'pdf', 'txt'];
+            if (!allowed.includes(ext)) {
+                showToast('不支持的文件格式，仅支持 docx/pdf/txt', true);
+                return;
+            }
+
+            const prog = document.getElementById(prefix + 'uploadProgress');
+            const fname = document.getElementById(prefix + 'uploadFileName');
+            const bar = document.getElementById(prefix + 'uploadBar');
+            if (!prog) return;
+
+            prog.classList.add('show');
+            fname.textContent = '正在上传: ' + file.name;
+            bar.style.width = '30%';
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/api/knowledge');
+
+                xhr.upload.onprogress = (e) => {
+                    if (e.lengthComputable) {
+                        const pct = Math.round((e.loaded / e.total) * 100);
+                        bar.style.width = pct + '%';
+                    }
+                };
+
+                xhr.onload = () => {
+                    const result = JSON.parse(xhr.responseText);
+                    if (result.success) {
+                        bar.style.width = '100%';
+                        fname.textContent = '✅ ' + file.name + ' 上传成功';
+                        showToast('知识库文件已上传并解析');
+                        loadKnowledgeList();
+                        loadSideKnowledge();
+                        setTimeout(() => {
+                            prog.classList.remove('show');
+                            bar.style.width = '0%';
+                        }, 2000);
+                    } else {
+                        fname.textContent = '❌ ' + (result.error || '上传失败');
+                        bar.style.width = '0%';
+                        showToast(result.error || '上传失败', true);
+                    }
+                    const fi = document.getElementById(prefix + 'fileInput');
+                    if (fi) fi.value = '';
+                };
+
+                xhr.onerror = () => {
+                    fname.textContent = '❌ 网络错误';
+                    bar.style.width = '0%';
+                    showToast('上传失败', true);
+                };
+
+                xhr.send(formData);
+            } catch (e) {
+                showToast('上传异常: ' + e.message, true);
+                prog.classList.remove('show');
+            }
+        }
+
+        async function loadKnowledgeList() {
+            const result = await api('/api/knowledge', 'GET');
+            const el = document.getElementById('knowledgeList');
+            if (!el) return;
+            if (!result.success || !result.data.length) {
+                el.innerHTML = '<p style="font-size:12px;color:var(--text2)">暂无知识库文件</p>';
+                return;
+            }
+            el.innerHTML = result.data.map(k => `
+    <div class="knowledge-item">
+      <div>
+        <div class="k-name">${k.filename}</div>
+        <div class="k-time">${k.created_at}</div>
+      </div>
+      <button onclick="deleteKnowledge(${k.id})">删除</button>
+    </div>
+  `).join('');
+        }
+
+        async function deleteKnowledge(id) {
+            await api('/api/knowledge/' + id, 'DELETE');
+            loadKnowledgeList();
+            loadSideKnowledge();
+            showToast('已删除');
+        }
+
+        async function loadHistory() {
+            const result = await api('/api/history?days=365');
+            const el = document.getElementById('historyList');
+            if (!result.success || !result.data.length) {
+                el.innerHTML = '<li style="padding:20px;text-align:center;color:var(--text2)">暂无历史记录</li>';
+                return;
+            }
+            el.innerHTML = result.data.map(h => `
+    <li onclick="copyHistoryItem(this)" data-text="${encodeURIComponent(h.full_text)}">
+      <div class="h-date">${h.date} ${h.mode === 'morning' ? '🌅 早安' : '🌙 晚安'}</div>
+      <div class="h-body">${h.body}</div>
+      <div class="h-tags">${h.tags}</div>
+    </li>
+  `).join('');
+        }
+
+        function copyHistoryItem(el) {
+            const text = decodeURIComponent(el.dataset.text);
+            navigator.clipboard.writeText(text).then(() => showToast('已复制'));
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('show');
+        }
+
+        function closeModalOutside(e) {
+            if (e.target === document.getElementById('modalOverlay')) closeModal();
+        }
+
+        loadToday();
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').catch(() => { });
+        }
+
+        loadSideSettings();
+        loadSideHistory();
+        loadSideKnowledge();
+        initSideUploadZone();
+
+        async function loadSideSettings() {
+            const result = await api('/api/config', 'GET');
+            if (result.success) {
+                const d = result.data;
+                const b = document.getElementById('sideApiBase');
+                const k = document.getElementById('sideApiKey');
+                const m = document.getElementById('sideModel');
+                if (b && d.api_base) b.value = d.api_base;
+                if (k && d.api_key) k.value = d.api_key;
+                if (m && d.model) m.value = d.model;
+            }
+        }
+
+        async function saveSideSettings() {
+            const base = document.getElementById('sideApiBase')?.value;
+            const key = document.getElementById('sideApiKey')?.value;
+            const model = document.getElementById('sideModel')?.value;
+            const data = {};
+            if (base) data.api_base = base;
+            if (key && !key.endsWith('...')) data.api_key = key;
+            if (model) data.model = model;
+            const result = await api('/api/config', 'POST', data);
+            if (result.success) {
+                showToast('配置已保存');
+            } else {
+                showToast(result.error || '保存失败', true);
+            }
+        }
+
+        async function loadSideHistory() {
+            const result = await api('/api/history?days=30');
+            const el = document.getElementById('sideHistoryList');
+            if (!el) return;
+            if (!result.success || !result.data.length) {
+                el.innerHTML = '<li style="padding:16px;text-align:center;color:var(--text2)">暂无历史记录</li>';
+                return;
+            }
+            el.innerHTML = result.data.slice(0, 15).map(h => `
+                <li onclick="copyHistoryItem(this)" data-text="${encodeURIComponent(h.full_text)}">
+                    <div class="h-date">${h.date} ${h.mode === 'morning' ? '🌅' : '🌙'}</div>
+                    <div class="h-body">${h.body}</div>
+                    <div class="h-tags">${h.tags}</div>
+                </li>
+            `).join('');
+        }
+
+        async function loadSideKnowledge() {
+            const result = await api('/api/knowledge', 'GET');
+            const el = document.getElementById('sideKnowledgeList');
+            if (!el) return;
+            if (!result.success || !result.data.length) {
+                el.innerHTML = '<p style="font-size:13px;color:var(--text2)">暂无知识库文件</p>';
+                return;
+            }
+            el.innerHTML = result.data.map(k => `
+                <div class="knowledge-item">
+                    <div>
+                        <div class="k-name">${k.filename}</div>
+                        <div class="k-time">${k.created_at}</div>
+                    </div>
+                    <button onclick="deleteKnowledge(${k.id})">删除</button>
+                </div>
+            `).join('');
+        }
+
+        let deferredPrompt = null;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            showInstallBanner();
+        });
+
+        function showInstallBanner() {
+            const banner = document.createElement('div');
+            banner.id = 'installBanner';
+            banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#1a1a2e,#16213e);border-top:1px solid #2a2a4a;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;z-index:300;';
+            banner.innerHTML = `
+                <div style="font-size:13px;color:#eaeaea">
+                    <div style="font-weight:600;margin-bottom:2px">📱 安装到手机主屏幕</div>
+                    <div style="font-size:11px;color:#a0a0b0">像APP一样使用，更方便</div>
+                </div>
+                <div style="display:flex;gap:8px">
+                    <button onclick="dismissInstall()" style="background:none;border:1px solid #2a2a4a;color:#a0a0b0;padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer">稍后</button>
+                    <button onclick="installApp()" style="background:#e94560;border:none;color:#fff;padding:6px 16px;border-radius:6px;font-size:12px;cursor:pointer">安装</button>
+                </div>
+            `;
+            document.body.appendChild(banner);
+        }
+
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+            }
+            dismissInstall();
+        }
+
+        function dismissInstall() {
+            const b = document.getElementById('installBanner');
+            if (b) b.remove();
+        }
+    </script>
+</body>
+
+</html>

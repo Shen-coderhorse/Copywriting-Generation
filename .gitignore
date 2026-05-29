@@ -1,0 +1,879 @@
+# ================================
+# 通用 Git 忽略配置 (GitHub 提交标准)
+# 适用于所有项目类型
+# ================================
+
+# ================================
+# IDE 和编辑器配置
+# ================================
+
+# JetBrains 全系列 (IDEA/WebStorm/PyCharm/GoLand/RustRover/CLion 等)
+.idea/
+*.iws
+*.ipr
+*.iml
+out/
+.gradle/
+.idea_modules/
+*.rbc
+
+# VS Code
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+.vscode-server/
+
+# Vim
+*.sw[a-p]
+*.swo
+*~
+.*.sw[a-z]
+.*.un~
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# Eclipse
+.classpath
+.project
+.settings/
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.loadpath
+.recommenders
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# Atom
+.atom/
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Komodo
+*.kbdproj
+
+# QtCreator
+*.user
+*.creator
+*.creator.user
+*.depends
+*.pro.user
+
+# Android Studio
+*.iml
+.gradle
+.idea/
+captures/
+.externalNativeBuild
+.cxx
+local.properties
+
+# Xcode
+*.xcodeproj/xcuserdata/
+*.xcodeproj/xcshareddata/xcuserdata/
+DerivedData/
+*.hmap
+*.xcscmblueprint
+*.xccheckout
+
+# ================================
+# AI 开发工具配置
+# ================================
+
+# Trae AI
+.trae/
+.traeignore
+
+# Cursor AI
+.cursor/
+.cursorignore
+cursor.config.json
+cursor-history/
+
+# Claude Code
+.claude/
+claude.config.json
+.claudeignore
+claude-history.json
+
+# GitHub Copilot / OpenAI Codex
+.github/copilot/
+.copilot/
+copilot.config.json
+copilot-logs/
+
+# GPT 系列
+.gpt/
+chatgpt/
+.openai/
+openai-api-key.json
+gpt-prompts.json
+
+# Windsurf
+.windsurf/
+windsurf.config.json
+.windsurfignore
+windsurf-sessions/
+
+# Devin AI
+.devin/
+devin.config.json
+devin-workspace/
+.devinignore
+
+# Augment Code
+.augment/
+augment.config.json
+augment-cache/
+
+# Qoder AI
+.qoder/
+qoder.config.json
+qoder-history/
+.qoderignore
+
+# Continue.dev
+.continue/
+continue.config.json
+continue-history/
+
+# Tabnine
+.tabnine/
+tabnine.config.json
+tabnine-cache/
+
+# Codeium
+.codeium/
+codeium.config.json
+codeium-logs/
+
+# Sourcery AI
+.sourcery/
+sourcery.config.json
+sourcery-cache/
+
+# CodeGeeX (智谱AI)
+.codegeex/
+codegeex.config.json
+
+# 通义灵码 (阿里云)
+.tongyi/
+tongyi-lingma.config.json
+
+# 豆包编程助手 (字节跳动)
+.doubao/
+doubao-coder.config.json
+
+# 文心快码 (百度)
+.wenxin/
+wenxin-kuaima.config.json
+
+# 讯飞星火编程
+.xunfei/
+xinghuo-coder.config.json
+
+# AI 提示词仓库
+.prompts/
+ai-prompts/
+prompt-library/
+
+# AI 临时文件
+*.ai.tmp
+*.ai.gen
+*.ai.bak
+*.chat.json
+*.session.json
+*.history.json
+*.ai-review.md
+*.code-review.ai.json
+*.ai-analysis.json
+*.project-metrics.ai
+
+# ================================
+# 操作系统文件
+# ================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+ehthumbs.db
+ehthumbs-*.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ================================
+# 临时文件与缓存
+# ================================
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+*.orig
+*.rej
+*.patch
+*.log
+*.swp
+*.swo
+
+.cache/
+.tmp/
+.temp/
+tmp/
+temp/
+
+# ================================
+# 版本控制系统
+# ================================
+
+# SVN
+.svn/
+
+# Mercurial
+.hg/
+
+# ================================
+# Node.js / JavaScript / TypeScript
+# ================================
+
+# 依赖目录
+node_modules/
+bower_components/
+.pnp
+.pnp.js
+
+# 日志文件
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# 构建产物 (保留项目交付物)
+# dist/
+build/
+.eslintcache
+.next/
+.nuxt/
+.output/
+.astro/
+.svelte-kit/
+.remix/
+.expo/
+.webpack/
+.parcel-cache/
+.vite/
+.tsbuildinfo
+
+# 测试覆盖率
+coverage/
+.nyc_output/
+lcov.info
+coverage-final.json
+
+# 环境变量
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.local
+
+# 样式预处理器
+*.css.map
+*.scss.map
+*.less.map
+*.styl.map
+
+# ================================
+# Java / JVM
+# ================================
+
+# 编译产物
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# JPB (JPA Buddy)
+.jpb/
+
+# Spring Boot
+.spring-boot-starter/
+.spring/
+
+# ================================
+# Python
+# ================================
+
+# 字节编译
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+*.pyd
+
+# C 扩展
+*.so
+
+# 虚拟环境
+env/
+venv/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+.venv.bak/
+.conda/
+
+# 分发/打包 (保留项目交付物)
+# dist/
+*.egg-info/
+.installed.cfg
+*.egg
+*.egg-info/
+build/
+MANIFEST
+*.manifest
+*.spec
+
+# 安装包
+pip-log.txt
+pip-delete-this-directory.txt
+
+# 测试
+.pytest_cache/
+.hypothesis/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# 环境配置文件
+.venv
+.flake8
+.pylintrc
+.mypy.ini
+
+# ================================
+# C / C++
+# ================================
+
+# 编译产物
+*.o
+*.obj
+*.so
+*.dll
+*.dylib
+*.exe
+*.out
+*.app
+*.a
+*.lib
+*.ilk
+*.pdb
+
+# 构建目录
+build/
+cmake-build-*/
+out/
+Debug/
+Release/
+x64/
+x86/
+
+# 包管理器
+vcpkg/
+conanfile.txt.lock
+
+# ================================
+# Go
+# ================================
+
+# 编译产物
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# 测试
+*.test
+*.out
+*.prof
+
+# 依赖管理
+go.work
+go.work.sum
+vendor/
+
+# ================================
+# Rust
+# ================================
+
+# 编译产物
+target/
+**/*.rs.bk
+
+# Cargo
+Cargo.lock
+**/*.pdb
+
+# ================================
+# C# / .NET
+# ================================
+
+# 编译产物
+[Bb]in/
+[Oo]bj/
+*.dll
+*.exe
+*.pdb
+*.mdb
+*.cache
+*.log
+
+# Visual Studio
+.vs/
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+*.userprefs
+*.pidb
+*.booproj
+
+# Mono
+*.pidb
+*.booproj
+
+# ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# Rider
+.idea/
+
+# ================================
+# PHP
+# ================================
+
+# Composer
+vendor/
+
+# Laravel
+*.key
+/storage/debugbar/
+/storage/framework/cache/
+/storage/framework/sessions/
+/storage/framework/views/
+/storage/logs/
+
+# WordPress
+wp-content/cache/
+wp-content/uploads/
+
+# PHPUnit
+.phpunit.result.cache
+
+# ================================
+# Ruby
+# ================================
+
+# Bundler
+vendor/bundle
+.bundle/
+Gemfile.lock
+
+# RVM
+.rvm/
+
+# Pry
+.pry-history
+
+# ================================
+# Swift / iOS
+# ================================
+
+# Xcode
+*.xcodeproj/xcuserdata/
+*.xcodeproj/xcshareddata/xcuserdata/
+*.xcworkspace/xcshareddata/xcuserdata/
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# CocoaPods
+Pods/
+*.xccheckout
+
+# Carthage
+Carthage/Build/
+
+# Swift Package Manager
+.build/
+Package.resolved
+
+# ================================
+# Kotlin
+# ================================
+
+# 编译产物
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Kotlin Native
+.kotlin/
+
+# ================================
+# 数据库相关
+# ================================
+
+# 本地数据库 (保留运行时数据)
+# data/
+
+# SQLite
+*.db
+*.db3
+*.sqlite
+*.sqlite3
+*.sqlite-journal
+*.sql-journal
+*.sql-wal
+
+# 数据库备份
+*.dump
+*.sql.gz
+*.sql.bak
+
+# Redis
+dump.rdb
+appendonly.aof
+
+# 本地数据库目录
+# data/
+db/
+database/
+*.db-journal
+
+# ================================
+# 上传文件与媒体资源
+# ================================
+uploads/
+public/uploads/
+storage/
+media/
+assets/
+
+# ================================
+# Docker 和容器化
+# ================================
+
+# Docker 配置
+.dockerignore
+docker-compose.override.yml
+docker-compose.dev.yml
+docker-compose.local.yml
+*.dockerfile.local
+
+# Docker 数据
+volumes/
+docker-data/
+docker-volumes/
+
+# Kubernetes
+*.kubeconfig
+kubeconfig
+kubeconfig.*
+
+# Helm
+*.tgz
+
+# ================================
+# CI/CD 和 DevOps
+# ================================
+
+# Jenkins
+.jenkins/
+jenkins_home/
+
+# GitHub Actions
+.github/workflows/*.local.yml
+
+# GitLab CI
+.gitlab-ci-local/
+
+# Bazel
+.bazel/
+bazel-out/
+bazel-bin/
+bazel-genfiles/
+bazel-testlogs/
+
+# Terraform
+*.tfstate
+*.tfstate.backup
+.terraform/
+*.tfvars
+
+# Ansible
+*.retry
+
+# ================================
+# 测试覆盖率与报告
+# ================================
+coverage/
+.nyc_output/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+*.py,cover
+test-results/
+junit.xml
+test-report.xml
+*.lcov
+
+# ================================
+# 代码质量工具
+# ================================
+
+# ESLint
+.eslintcache
+
+# SonarQube
+.sonar/
+.sonarqube/
+
+# Checkstyle
+checkstyle-result.xml
+
+# ================================
+# 文档和导出文件
+# ================================
+
+# 临时文档
+*.drawio.bak
+*.drawio.tmp
+*.tmp.md
+
+# 编译后的文档
+*.pdf
+*.doc
+*.docx
+*.xls
+*.xlsx
+*.ppt
+*.pptx
+
+# 图片导出 (项目源码中的图片通常应该提交)
+# *.png
+# *.jpg
+# *.svg
+
+# ================================
+# 密钥与证书 (安全相关)
+# ================================
+
+# 私钥和证书
+*.key
+*.pem
+*.crt
+*.cert
+*.p12
+*.pfx
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+*.keystore
+*.jks
+
+# 敏感配置
+config/secrets.yml
+config/database.yml
+application-secrets.properties
+secrets/
+credentials/
+
+# AWS
+.aws/
+*.aws.credentials
+
+# GCP
+*.json.key
+service-account.json
+
+# Azure
+.azure/
+
+# ================================
+# 包管理和缓存
+# ================================
+
+# npm
+package-lock.json
+npm-debug.log*
+
+# Yarn
+yarn.lock
+yarn-error.log
+.yarn-integrity
+.yarn/cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# pnpm
+pnpm-lock.yaml
+
+# Composer (PHP)
+composer.lock
+
+# Pip (Python)
+Pipfile.lock
+poetry.lock
+
+# ================================
+# 云服务和云平台
+# ================================
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+
+# Vercel
+.vercel
+
+# Netlify
+.netlify/
+
+# Heroku
+.heroku/
+
+# ================================
+# 其他常见忽略
+# ================================
+
+# 重构备份
+*.refactor
+*.rewrite
+*.migrate
+*.v1
+*.v2
+*.deprecated
+
+# 临时分析
+*.analysis
+*.metrics
+*.stats
+
+# 密码文件
+*.password
+*.passwd
+*.credentials
+
+# 本地配置
+*.local
+config.local.*
+config.dev.*
+
+# 调试文件
+*.debug
+*.trace
+
+# 性能分析
+*.prof
+*.trace
+*.cpuprofile
+*.heapprofile
+
+# ================================
+# 结束
+# ================================
